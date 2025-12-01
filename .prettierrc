@@ -9,6 +9,13 @@
             }
         },
         {
+            "files": ["flake.lock"],
+            "options": {
+                "tabWidth": 4,
+                "parser": "json"
+            }
+        },
+        {
             "files": [".clangd", ".clang-tidy", ".clang-format"],
             "options": {
                 "parser": "yaml"

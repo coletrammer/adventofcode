@@ -15,30 +15,29 @@
     in
     {
       devShells.default = pkgs.mkShell.override { inherit stdenv; } {
-        packages =
-          [
-            # Compilers
-            clang
-            gcc
-          ]
-          # Treefmt and all individual formatters
-          ++ [ config.treefmt.build.wrapper ]
-          ++ builtins.attrValues config.treefmt.build.programs
-          ++ (with pkgs; [
-            # Build support
-            cmake
-            ninja
-            ccache
+        packages = [
+          # Compilers
+          clang
+          gcc
+        ]
+        # Treefmt and all individual formatters
+        ++ [ config.treefmt.build.wrapper ]
+        ++ builtins.attrValues config.treefmt.build.programs
+        ++ (with pkgs; [
+          # Build support
+          cmake
+          ninja
+          ccache
 
-            # justfile support
-            just
-            jq
-            fzf
-            html-xml-utils
+          # justfile support
+          just
+          jq
+          fzf
+          html-xml-utils
 
-            # Dependencies
-            inputs.dius.packages.${system}.dius-runtime
-          ]);
+          # Dependencies
+          inputs.dius.packages.${system}.dius-runtime
+        ]);
       };
     };
 }
