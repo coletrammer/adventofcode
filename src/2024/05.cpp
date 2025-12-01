@@ -1,3 +1,4 @@
+#include "di/container/algorithm/sort.h"
 #include "di/container/interface/empty.h"
 #include "di/container/tree/tree_map.h"
 #include "di/container/tree/tree_multimap.h"
@@ -9,8 +10,6 @@
 #include "dius/print.h"
 #include "runner/aliases.h"
 #include "runner/aoc_problem_registry.h"
-
-#include "di/container/algorithm/sort.h"
 
 using namespace di;
 using namespace dius;

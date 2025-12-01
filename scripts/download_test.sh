@@ -37,7 +37,7 @@ split_sections() {
     counter=0
 
     while IFS= read -r line; do
-        if [[ "$line" =~ ^~+$ ]]; then
+        if [[ $line =~ ^~+$ ]]; then
             file_path="$(printf "%s/%s/test_%02d.txt" "$project_root" "$output_dir" "$counter")"
 
             echo "Saving test input 'test_$(printf "%02d" "$counter")' to '$file_path'..."

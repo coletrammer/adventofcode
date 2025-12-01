@@ -219,12 +219,5 @@ AOC_SOLUTION(2024, 24, b, Ts) {
     println("z={} ({:b})"_sv, z, z);
     println("z={} ({:b})"_sv, zz, zz);
 
-    auto res = ""_ts;
-    for (auto s : swapped) {
-        if (!res.empty()) {
-            res.push_back(',');
-        }
-        res.append(s);
-    }
-    return res;
+    return join_with(swapped, ',') | to<Ts>();
 }

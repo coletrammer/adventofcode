@@ -17,7 +17,7 @@
 namespace aoc {
 struct Args {
     di::Optional<di::PathView> input;
-    int year { 2024 };
+    int year { 2025 };
     int day { 1 };
     bool part_b { false };
     di::Optional<i32> test;

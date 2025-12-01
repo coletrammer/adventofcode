@@ -1,4 +1,4 @@
-preset := env("PRESET", "clang_release_default")
+preset := env("PRESET", "dev")
 
 alias c := configure
 alias b := build
@@ -32,36 +32,38 @@ build_file name: ensure_configured
     #!/usr/bin/env bash
     set -euo pipefail
 
-    targets=$(cmake --build --preset {{ preset }}_non_unity -- -t targets all \
-        | cut -d ' ' -f 1 \
-        | tr -d '[:]' \
-        | grep -E "{{ name }}" \
+    targets=$(
+        cmake --build --preset {{ preset }} -- -t targets all |
+            cut -d ' ' -f 1 |
+            tr -d '[:]' |
+            grep -E "{{ name }}"
     )
 
-    echo -e '\e[1m'"cmake --build --preset {{ preset }}_non_unity -t "$targets'\e[m'
-    cmake --build --preset {{ preset }}_non_unity -t ${targets}
+    echo -e '\e[1m'"cmake --build --preset {{ preset }} -t "$targets'\e[m'
+    cmake --build --preset {{ preset }} -t ${targets}
 
 # Build a specific target (regex matching)
 build_target name: ensure_configured
     #!/usr/bin/env bash
     set -euo pipefail
 
-    targets=$(cmake --build --preset {{ preset }} -- -t targets all \
-        | cut -d ' ' -f 1 \
-        | tr -d '[:]' \
-        | grep -E "{{ name }}" \
-        | grep -vF '.cxx.o' \
-        | grep -vF 'cmake_object_order' \
-        | grep -vF 'CMakeFiles' \
-        | grep -vF 'CMakeLists.txt' \
-        | grep -vF '/install' \
-        | grep -vF 'verify_interface_header_sets' \
-        | grep -vF '/edit_cache' \
-        | grep -vF '/rebuild_cache' \
-        | grep -vF '/list_install_components' \
-        | grep -vE '/all$' \
-        | grep -vE '/test$' \
-        | grep -E '/' \
+    targets=$(
+        cmake --build --preset {{ preset }} -- -t targets all |
+            cut -d ' ' -f 1 |
+            tr -d '[:]' |
+            grep -E "{{ name }}" |
+            grep -vF '.cxx.o' |
+            grep -vF 'cmake_object_order' |
+            grep -vF 'CMakeFiles' |
+            grep -vF 'CMakeLists.txt' |
+            grep -vF '/install' |
+            grep -vF 'verify_interface_header_sets' |
+            grep -vF '/edit_cache' |
+            grep -vF '/rebuild_cache' |
+            grep -vF '/list_install_components' |
+            grep -vE '/all$' |
+            grep -vE '/test$' |
+            grep -E '/'
     )
 
     echo -e '\e[1m'"cmake --build --preset {{ preset }} -t "$targets'\e[m'
@@ -72,9 +74,9 @@ run *args="": ensure_configured
     #!/usr/bin/env bash
     set -euo pipefail
 
-    build_directory=$( \
-        jq -rc '.configurePresets.[] | select(.name == "{{ preset }}") | .binaryDir' < CMakePresets.json | \
-        sed s/\${sourceDir}/./g \
+    build_directory=$(
+        jq -rc '.configurePresets.[] | select(.name == "{{ preset }}") | .binaryDir' CMakePresets.json CMakeUserPresets.json |
+            sed s/\${sourceDir}/./g
     )
 
     set +e
@@ -120,6 +122,10 @@ check_tidy *args="": ensure_configured
     export IROS_TIDY_ARGS="{{ args }}"
     cmake --build --preset {{ preset }} -t check_tidy
 
+# Verify all header files
+verify_headers:
+    @just preset={{ preset }} build -t all_verify_interface_header_sets
+
 # Add a new solution, open the problem, and download the input.
 init year day:
     ./scripts/download_input.sh {{ year }} {{ day }}
@@ -152,6 +158,11 @@ format:
 check:
     nix flake check
 
+# Update flakes
+update:
+    nix flake update --flake .
+    nix flake update --flake ./meta/nix/dev
+
 # Select a CMake preset (meant to be run with eval, e.g. `eval $(just choose)`)
 choose:
     @echo "export PRESET=\$(cmake --list-presets=configure | tail +2 | fzf | awk '{ print \$1 }' | tr -d '[\"]')"
@@ -161,13 +172,13 @@ cleanall:
     rm -rf build/
 
 [private]
-ensure_configured preset=preset:
+ensure_configured preset=preset: ensure_user_presets
     #!/usr/bin/env bash
     set -euo pipefail
 
-    build_directory=$( \
-        jq -rc '.configurePresets.[] | select(.name == "{{ preset }}") | .binaryDir' < CMakePresets.json | \
-        sed s/\${sourceDir}/./g \
+    build_directory=$(
+        jq -rc '.configurePresets.[] | select(.name == "{{ preset }}") | .binaryDir' CMakePresets.json CMakeUserPresets.json |
+            sed s/\${sourceDir}/./g
     )
     if [ ! -d "$build_directory" ]; then
         echo -e '\e[1m'"cmake --preset {{ preset }}"'\e[m'
@@ -175,7 +186,16 @@ ensure_configured preset=preset:
     fi
 
     build_directory="$(realpath $build_directory)"
-    if [ "`readlink build/compile_commands.json`" != "$build_directory"/compile_commands.json ]; then
-        rm -f build/compile_commands.json
-        ln -s "$build_directory"/compile_commands.json build/compile_commands.json
+    if [ "$(readlink build/compile_commands.json)" != "$build_directory"/compile_commands.json ]; then
+        rm -f compile_commands.json
+        ln -s "$build_directory"/compile_commands.json compile_commands.json
+    fi
+
+[private]
+ensure_user_presets:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if [ ! -e "CMakeUserPresets.json" ]; then
+        echo '{"version":2,"configurePresets":[]}' > CMakeUserPresets.json
     fi

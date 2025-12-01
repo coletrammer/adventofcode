@@ -436,7 +436,7 @@ std::string lines[] = {
     "6-14 z: wzlzbdzzzzmzqspbcn",
     "9-15 q: cttgqzglzxdqjhd",
     "1-7 j: rgjrjjjjj",
-    "6-9 t: tttttxtttttt",
+    "6-9 t: tttaoctttttt",
     "3-5 d: rqkfq",
     "3-12 c: cckwqckkcxcmwvnkz",
     "7-8 z: zzkzdztgzz",

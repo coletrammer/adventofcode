@@ -85,12 +85,5 @@ AOC_SOLUTION(2024, 23, b, Ts) {
         dfs(key, vis);
     }
 
-    auto out = Ts {};
-    for (auto const& s : res) {
-        if (!out.empty()) {
-            out.push_back(',');
-        }
-        out.append(s);
-    }
-    return out;
+    return join_with(res, ',') | to<Ts>();
 }

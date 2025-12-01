@@ -15,6 +15,7 @@
 #include "di/function/ycombinator.h"
 #include "di/random/concepts/uniform_random_bit_generator.h"
 #include "di/random/distribution/uniform_int_distribution.h"
+#include "di/random/generator/linear_congruential_engine.h"
 #include "dius/print.h"
 #include "runner/aliases.h"
 #include "runner/aoc_problem_registry.h"

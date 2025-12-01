@@ -1,4 +1,3 @@
-#include "di/container/hash/node/node_hash_set.h"
 #include "di/function/compare_backwards.h"
 #include "runner/aliases.h"
 #include "runner/aoc_problem_registry.h"
@@ -47,7 +46,7 @@ AOC_SOLUTION(2024, 16, a, i64) {
         auto operator<=>(State2 const&) const = default;
     };
 
-    Set<State> queue;
+    PriorityQueue<State, Vec<State>, CompareBackwards> queue;
     Set<State2> visited;
 
     auto add = [&](State state) {
@@ -61,7 +60,7 @@ AOC_SOLUTION(2024, 16, a, i64) {
 
         auto state2 = State2 { state.row, state.col, state.dr, state.dc };
         if (!visited.contains(state2)) {
-            queue.insert(state);
+            queue.push(state);
             visited.insert(state2);
         }
     };
@@ -69,8 +68,7 @@ AOC_SOLUTION(2024, 16, a, i64) {
     add({ 0, srow, scol, 0, 1 }); // east
 
     while (!queue.empty()) {
-        auto state = *queue.begin();
-        queue.erase(queue.begin());
+        auto state = *queue.pop();
         if (state.row == erow && state.col == ecol) {
             return state.score;
         }
