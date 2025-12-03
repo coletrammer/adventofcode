@@ -6,7 +6,7 @@ This repository contains my solutions to the [Advent of Code](https://adventofco
 
 | Year | Language | Number of Problems Solved | Score |
 | ---- | -------- | ------------------------- | ----- |
-| 2024 | C++      | 2/12                      | N/A   |
+| 2025 | C++      | 3/12                      | N/A   |
 | 2024 | C++      | 25/25                     | 0     |
 | 2023 | C++      | 25/25                     | 91    |
 | 2022 | Rust     | 25/25                     | 0     |
@@ -22,6 +22,7 @@ After 2024, there is no longer a global leaderboard.
 
 | Day | **Part A** | Time     | **Part B** | Time     |
 | --- | ---------- | -------- | ---------- | -------- |
+| 3   |            | 00:02:59 |            | 00:12:24 |
 | 2   |            | 00:05:28 |            | 00:16:27 |
 | 1   |            | 00:04:36 |            | 00:05:38 |
 
